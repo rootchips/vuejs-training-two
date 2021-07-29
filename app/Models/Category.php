@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Post extends Model
+class Category extends Model
 {
     use HasFactory;
 
     protected $guarded = [];
 
-    public function subCategory()
+    public function subCategories()
     {
-    	return $this->belongsTo(SubCategory::class);
+    	return $this->hasMany(SubCategory::class);
     }
 }

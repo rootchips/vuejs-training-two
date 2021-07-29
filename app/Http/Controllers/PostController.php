@@ -15,7 +15,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::all();
+        $posts = Post::with('subCategory.category')->get();
 
         return response()->json($posts);
     }
@@ -31,11 +31,16 @@ class PostController extends Controller
         $request->validate([
             'post.title' => 'required',
             'post.content' => 'required',
+            'category' => 'required',
+            'sub_category' => 'required',
         ]);
+
+        // dia akan berhenti dekat sini bila dia hit validation
 
         $post = new Post;
         $post->title = $request->post['title'];
         $post->content = $request->post['content'];
+        $post->sub_category_id = $request->sub_category;
         $post->save();
 
         return response()->json($post);
@@ -59,9 +64,18 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Post $post)
     {
-        //
+        $request->validate([
+            'post.title' => 'required',
+            'post.content' => 'required',
+        ]);
+
+        $post->title = $request->post['title'];
+        $post->content = $request->post['content'];
+        $post->save();
+
+        return response()->json($post);
     }
 
     /**
@@ -70,8 +84,12 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Post $post)
     {
-        //
+        $post->delete();
+
+        return response()->json([
+            'success'
+        ]);
     }
 }

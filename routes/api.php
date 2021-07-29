@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 
 //Controller
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\CategoryController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -24,5 +26,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::apiResources([
 	'posts' => PostController::class,
 ]);
+
+Route::get('/data/category', [CategoryController::class, 'category']);
+Route::get('/data/category/sub/{category}', [CategoryController::class, 'subCategory']);
+
 
 

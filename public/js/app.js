@@ -1895,10 +1895,77 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
 
 
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -1957,11 +2024,17 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     return {
       errors: null,
       posts: [],
+      categories: [],
+      sub_categories: [],
+      category: "",
+      sub_category: "",
       post: {
+        id: null,
         title: null,
         content: null
       },
-      isView: false
+      isView: false,
+      isEdit: false
     };
   },
   // Untuk trigger function apabila page di reload 
@@ -1973,21 +2046,26 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _this = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
-        var _yield$axios$get, data;
+        var _yield$Promise$all, _yield$Promise$all2, posts, categories;
 
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
                 _context.next = 2;
-                return axios.get('/api/posts');
+                return Promise.all([axios.get('/api/posts'), // Load Post
+                axios.get('/api/data/category') // Load Category
+                ]);
 
               case 2:
-                _yield$axios$get = _context.sent;
-                data = _yield$axios$get.data;
-                _this.posts = data;
+                _yield$Promise$all = _context.sent;
+                _yield$Promise$all2 = _slicedToArray(_yield$Promise$all, 2);
+                posts = _yield$Promise$all2[0];
+                categories = _yield$Promise$all2[1];
+                _this.posts = posts.data;
+                _this.categories = categories.data;
 
-              case 5:
+              case 8:
               case "end":
                 return _context.stop();
             }
@@ -1995,54 +2073,181 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee);
       }))();
     },
-    submit: function submit() {
+    loadSubCategory: function loadSubCategory() {
       var _this2 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
-        var _yield$axios$post, data;
+        var _yield$axios$get, data;
 
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                _context2.prev = 0;
+                // Load Sub Category from API (trigger from on change select)
+                _this2.sub_category = "";
                 _context2.next = 3;
-                return axios.post('/api/posts', {
-                  post: _this2.post
-                });
+                return axios.get("/api/data/category/sub/".concat(_this2.category));
 
               case 3:
-                _yield$axios$post = _context2.sent;
-                data = _yield$axios$post.data;
+                _yield$axios$get = _context2.sent;
+                data = _yield$axios$get.data;
+                _this2.sub_categories = data;
 
-                // Apabila data validation hit dekat sini, dia akan stop dekat sini
-                _this2.posts.push(data);
-
-                _this2.errors = null;
-                _this2.post = {
-                  title: null,
-                  content: null
-                };
-                _context2.next = 13;
-                break;
-
-              case 10:
-                _context2.prev = 10;
-                _context2.t0 = _context2["catch"](0);
-                _this2.errors = _context2.t0.response.data.errors;
-
-              case 13:
+              case 6:
               case "end":
                 return _context2.stop();
             }
           }
-        }, _callee2, null, [[0, 10]]);
+        }, _callee2);
+      }))();
+    },
+    submit: function submit() {
+      var _this3 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3() {
+        var _yield$axios$post, data;
+
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _context3.prev = 0;
+                _context3.next = 3;
+                return axios.post('/api/posts', {
+                  post: _this3.post,
+                  category: _this3.category,
+                  sub_category: _this3.sub_category
+                });
+
+              case 3:
+                _yield$axios$post = _context3.sent;
+                data = _yield$axios$post.data;
+
+                // Apabila data validation hit dekat sini, dia akan stop dekat sini
+                _this3.posts.push(data);
+
+                _this3.errors = null;
+                _this3.post = {
+                  title: null,
+                  content: null
+                };
+                _context3.next = 13;
+                break;
+
+              case 10:
+                _context3.prev = 10;
+                _context3.t0 = _context3["catch"](0);
+                _this3.errors = _context3.t0.response.data.errors;
+
+              case 13:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3, null, [[0, 10]]);
+      }))();
+    },
+    update: function update() {
+      var _this4 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4() {
+        var _yield$axios$put, data;
+
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                _context4.prev = 0;
+                _context4.next = 3;
+                return axios.put("/api/posts/".concat(_this4.post.id), {
+                  post: _this4.post
+                });
+
+              case 3:
+                _yield$axios$put = _context4.sent;
+                data = _yield$axios$put.data;
+
+                // Reload Data
+                _this4.load(); // Set is edit to false
+
+
+                _this4.isEdit = false; // Hide validation
+
+                _this4.errors = null; // Empty the input
+
+                _this4.post = {
+                  title: null,
+                  content: null
+                };
+                _context4.next = 14;
+                break;
+
+              case 11:
+                _context4.prev = 11;
+                _context4.t0 = _context4["catch"](0);
+                _this4.errors = _context4.t0.response.data.errors;
+
+              case 14:
+              case "end":
+                return _context4.stop();
+            }
+          }
+        }, _callee4, null, [[0, 11]]);
       }))();
     },
     view: function view(post) {
       this.isView = true;
       this.post.title = post.title;
       this.post.content = post.content;
+    },
+    edit: function edit(post) {
+      this.isEdit = true;
+      this.post.id = post.id;
+      this.post.title = post.title;
+      this.post.content = post.content;
+    },
+    deletePost: function deletePost(post) {
+      var _this5 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5() {
+        var alert, _yield$axios$delete, data;
+
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee5$(_context5) {
+          while (1) {
+            switch (_context5.prev = _context5.next) {
+              case 0:
+                alert = confirm('Are sure you want to delete this post?');
+
+                if (!(alert == true)) {
+                  _context5.next = 12;
+                  break;
+                }
+
+                _context5.prev = 2;
+                _context5.next = 5;
+                return axios["delete"]("/api/posts/".concat(post.id));
+
+              case 5:
+                _yield$axios$delete = _context5.sent;
+                data = _yield$axios$delete.data;
+
+                // Reload table
+                _this5.load();
+
+                _context5.next = 12;
+                break;
+
+              case 10:
+                _context5.prev = 10;
+                _context5.t0 = _context5["catch"](2);
+
+              case 12:
+              case "end":
+                return _context5.stop();
+            }
+          }
+        }, _callee5, null, [[2, 10]]);
+      }))();
     },
     back: function back() {
       this.isView = false;
@@ -38485,106 +38690,352 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _vm.isView == false
     ? _c("span", [
-        _c("div", [
-          _c(
-            "form",
-            {
-              on: {
-                submit: function($event) {
-                  $event.preventDefault()
-                  return _vm.submit.apply(null, arguments)
-                }
-              }
-            },
-            [
+        _vm.isEdit == false
+          ? _c("div", [
               _c(
-                "div",
-                { staticClass: "form-group" },
-                [
-                  _c("label", { attrs: { for: "title" } }, [_vm._v("Title")]),
-                  _vm._v(" "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.post.title,
-                        expression: "post.title"
-                      }
-                    ],
-                    staticClass: "form-control",
-                    attrs: { type: "text" },
-                    domProps: { value: _vm.post.title },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(_vm.post, "title", $event.target.value)
-                      }
+                "form",
+                {
+                  on: {
+                    submit: function($event) {
+                      $event.preventDefault()
+                      return _vm.submit.apply(null, arguments)
                     }
-                  }),
-                  _vm._v(" "),
-                  _vm.errors && _vm.errors["post.title"]
-                    ? [
-                        _c("span", { staticClass: "text-danger" }, [
-                          _vm._v(_vm._s(_vm.errors["post.title"][0]))
-                        ])
-                      ]
-                    : _vm._e()
-                ],
-                2
-              ),
-              _vm._v(" "),
-              _c(
-                "div",
-                { staticClass: "form-group" },
+                  }
+                },
                 [
-                  _c("label", { attrs: { for: "content" } }, [
-                    _vm._v("Content")
+                  _c("strong", { staticClass: "mb-5" }, [
+                    _vm._v("Create New Post")
                   ]),
                   _vm._v(" "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.post.content,
-                        expression: "post.content"
-                      }
-                    ],
-                    staticClass: "form-control",
-                    attrs: { type: "text" },
-                    domProps: { value: _vm.post.content },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
+                  _c(
+                    "div",
+                    { staticClass: "form-group mt-3" },
+                    [
+                      _c("label", { attrs: { for: "title" } }, [
+                        _vm._v("Title")
+                      ]),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.post.title,
+                            expression: "post.title"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: { type: "text" },
+                        domProps: { value: _vm.post.title },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(_vm.post, "title", $event.target.value)
+                          }
                         }
-                        _vm.$set(_vm.post, "content", $event.target.value)
-                      }
-                    }
-                  }),
+                      }),
+                      _vm._v(" "),
+                      _vm.errors && _vm.errors["post.title"]
+                        ? [
+                            _c("span", { staticClass: "text-danger" }, [
+                              _vm._v(_vm._s(_vm.errors["post.title"][0]))
+                            ])
+                          ]
+                        : _vm._e()
+                    ],
+                    2
+                  ),
                   _vm._v(" "),
-                  _vm.errors && _vm.errors["post.content"]
-                    ? [
-                        _c("span", { staticClass: "text-danger" }, [
-                          _vm._v(_vm._s(_vm.errors["post.content"][0]))
-                        ])
-                      ]
-                    : _vm._e()
-                ],
-                2
-              ),
-              _vm._v(" "),
-              _c(
-                "button",
-                { staticClass: "btn btn-success", attrs: { type: "submit" } },
-                [_vm._v("Post")]
+                  _c(
+                    "div",
+                    { staticClass: "form-group" },
+                    [
+                      _c("label", { attrs: { for: "content" } }, [
+                        _vm._v("Content")
+                      ]),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.post.content,
+                            expression: "post.content"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: { type: "text" },
+                        domProps: { value: _vm.post.content },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(_vm.post, "content", $event.target.value)
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _vm.errors && _vm.errors["post.content"]
+                        ? [
+                            _c("span", { staticClass: "text-danger" }, [
+                              _vm._v(_vm._s(_vm.errors["post.content"][0]))
+                            ])
+                          ]
+                        : _vm._e()
+                    ],
+                    2
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticClass: "form-group" },
+                    [
+                      _c("label", { attrs: { for: "category" } }, [
+                        _vm._v("Category")
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "select",
+                        {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.category,
+                              expression: "category"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          on: {
+                            change: [
+                              function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.category = $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              },
+                              _vm.loadSubCategory
+                            ]
+                          }
+                        },
+                        [
+                          _c("option", { attrs: { value: "" } }, [
+                            _vm._v("Please select")
+                          ]),
+                          _vm._v(" "),
+                          _vm._l(_vm.categories, function(category) {
+                            return _c(
+                              "option",
+                              { domProps: { value: category.id } },
+                              [_vm._v(_vm._s(category.name))]
+                            )
+                          })
+                        ],
+                        2
+                      ),
+                      _vm._v(" "),
+                      _vm.errors && _vm.errors["category"]
+                        ? [
+                            _c("span", { staticClass: "text-danger" }, [
+                              _vm._v(_vm._s(_vm.errors["category"][0]))
+                            ])
+                          ]
+                        : _vm._e()
+                    ],
+                    2
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticClass: "form-group" },
+                    [
+                      _c("label", { attrs: { for: "category" } }, [
+                        _vm._v("Sub Category")
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "select",
+                        {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.sub_category,
+                              expression: "sub_category"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          on: {
+                            change: function($event) {
+                              var $$selectedVal = Array.prototype.filter
+                                .call($event.target.options, function(o) {
+                                  return o.selected
+                                })
+                                .map(function(o) {
+                                  var val = "_value" in o ? o._value : o.value
+                                  return val
+                                })
+                              _vm.sub_category = $event.target.multiple
+                                ? $$selectedVal
+                                : $$selectedVal[0]
+                            }
+                          }
+                        },
+                        [
+                          _c("option", { attrs: { value: "" } }, [
+                            _vm._v("Please select")
+                          ]),
+                          _vm._v(" "),
+                          _vm._l(_vm.sub_categories, function(subcategory) {
+                            return _c(
+                              "option",
+                              { domProps: { value: subcategory.id } },
+                              [_vm._v(_vm._s(subcategory.name))]
+                            )
+                          })
+                        ],
+                        2
+                      ),
+                      _vm._v(" "),
+                      _vm.errors && _vm.errors["sub_category"]
+                        ? [
+                            _c("span", { staticClass: "text-danger" }, [
+                              _vm._v(_vm._s(_vm.errors["sub_category"][0]))
+                            ])
+                          ]
+                        : _vm._e()
+                    ],
+                    2
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-success",
+                      attrs: { type: "submit" }
+                    },
+                    [_vm._v("Submit")]
+                  )
+                ]
               )
-            ]
-          )
-        ]),
+            ])
+          : _c("div", [
+              _c(
+                "form",
+                {
+                  on: {
+                    submit: function($event) {
+                      $event.preventDefault()
+                      return _vm.update.apply(null, arguments)
+                    }
+                  }
+                },
+                [
+                  _c("strong", { staticClass: "mb-5" }, [_vm._v("Edit Post")]),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticClass: "form-group mt-3" },
+                    [
+                      _c("label", { attrs: { for: "title" } }, [
+                        _vm._v("Title")
+                      ]),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.post.title,
+                            expression: "post.title"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: { type: "text" },
+                        domProps: { value: _vm.post.title },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(_vm.post, "title", $event.target.value)
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _vm.errors && _vm.errors["post.title"]
+                        ? [
+                            _c("span", { staticClass: "text-danger" }, [
+                              _vm._v(_vm._s(_vm.errors["post.title"][0]))
+                            ])
+                          ]
+                        : _vm._e()
+                    ],
+                    2
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticClass: "form-group" },
+                    [
+                      _c("label", { attrs: { for: "content" } }, [
+                        _vm._v("Content")
+                      ]),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.post.content,
+                            expression: "post.content"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: { type: "text" },
+                        domProps: { value: _vm.post.content },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(_vm.post, "content", $event.target.value)
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _vm.errors && _vm.errors["post.content"]
+                        ? [
+                            _c("span", { staticClass: "text-danger" }, [
+                              _vm._v(_vm._s(_vm.errors["post.content"][0]))
+                            ])
+                          ]
+                        : _vm._e()
+                    ],
+                    2
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-secondary",
+                      attrs: { type: "submit" }
+                    },
+                    [_vm._v("Update")]
+                  )
+                ]
+              )
+            ]),
         _vm._v(" "),
         _c("div", { staticClass: "mt-5" }, [
           _c("table", { staticClass: "table table-bordered" }, [
@@ -38602,6 +39053,12 @@ var render = function() {
                       _c("td", [_vm._v(_vm._s(post.content))]),
                       _vm._v(" "),
                       _c("td", [
+                        _vm._v(_vm._s(post.sub_category.category.name))
+                      ]),
+                      _vm._v(" "),
+                      _c("td", [_vm._v(_vm._s(post.sub_category.name))]),
+                      _vm._v(" "),
+                      _c("td", [
                         _c(
                           "button",
                           {
@@ -38614,6 +39071,34 @@ var render = function() {
                             }
                           },
                           [_vm._v("View")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-secondary",
+                            attrs: { type: "button" },
+                            on: {
+                              click: function($event) {
+                                return _vm.edit(post)
+                              }
+                            }
+                          },
+                          [_vm._v("Edit")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-danger",
+                            attrs: { type: "button" },
+                            on: {
+                              click: function($event) {
+                                return _vm.deletePost(post)
+                              }
+                            }
+                          },
+                          [_vm._v("Delete")]
                         )
                       ])
                     ])
@@ -38647,6 +39132,10 @@ var staticRenderFns = [
       _c("th", [_vm._v("Title")]),
       _vm._v(" "),
       _c("th", [_vm._v("Content")]),
+      _vm._v(" "),
+      _c("th", [_vm._v("Category")]),
+      _vm._v(" "),
+      _c("th", [_vm._v("Sub Category")]),
       _vm._v(" "),
       _c("th", [_vm._v("Action")])
     ])
